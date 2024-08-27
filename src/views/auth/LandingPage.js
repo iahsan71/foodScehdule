@@ -10,14 +10,21 @@ function LandingPage() {
     const dispatch = useDispatch();
     const history = useHistory();
     const uid = useSelector((state) => state.authUser.uid);
-    const { list } = useSelector((state) => state.food);
+    const { list, lastDocument, hasMoreDocument } = useSelector((state) => state.food);
+    // console.log(list, lastDocument, hasMoreDocument)
     const [foodName, setFoodName] = useState('');
     const [day, setDay] = useState('');
     const [editing, setEditing] = useState({ id: null });
     const [searchFood, setSearchFood] = useState('');
     const [filterDay, setFilterDay] = useState('');
     const [sortOrder, setSortOrder] = useState('asc');
+    const [selectedImage, setSelectedImage] = useState(null);  
 
+    const handleImageChange = (event) => {  
+        const file = event.target.files[0];  
+        setSelectedImage(file)
+    };  
+// console.log(selectedImage)
     const handleLogout = () => {
         dispatch(logout(() => {
             history.push("/auth/login");
@@ -26,13 +33,15 @@ function LandingPage() {
 
     const handleAdd = () => {
         if (foodName && day) {
-            if (!editing.id) {
+            if (!editing.id){
                 const newSchedule = {
                     day,
                     food: foodName,
                     createdAt: new Date().toLocaleString(),
+                    image : selectedImage,
                     uid
                 };
+                // console.log(newSchedule)
                 dispatch(addFoodSchedule(newSchedule, () => {
                     setFoodName('');
                     setDay('');
@@ -57,8 +66,12 @@ function LandingPage() {
     };
 
     useEffect(() => {
-        dispatch(getFoodData(uid));
+        dispatch(getFoodData(uid, ""));
     }, []);
+
+    const loadMore = () => {
+        dispatch(getFoodData(uid, lastDocument));
+    }
 
     const filteredFoodSchedule = filterDay ? list.filter((item) => item.day === filterDay) : list;
 
@@ -113,6 +126,16 @@ function LandingPage() {
                             <option key={day}>{day}</option>
                         ))}
                     </Input>
+                </Col>
+                <Col lg='4' className='mt-5'>
+                    <div  className='d-flex'>
+                        <input type="file" onChange={handleImageChange} />
+                        {selectedImage && (
+                            <div> 
+                                <img src={selectedImage} alt="Selected" width={50} height={50}/>
+                            </div>
+                        )}
+                    </div>
                 </Col>
                 <Col lg='1'>
                     <Button color='primary' className='mt-5' onClick={handleAdd}>
@@ -176,6 +199,8 @@ function LandingPage() {
                             ))}
                         </tbody>
                     </Table>
+                    <Button color="primary" size="sm" disabled={!hasMoreDocument} onClick={() => loadMore()}>Load More</Button>
+
                 </Col>
             </Row>
         </>

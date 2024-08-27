@@ -7,11 +7,6 @@ import MainView from '../views/MainView';
 
 let routes = [
 	{
-		path: '/auth',
-		component: AuthView,
-		layout: 'auth',
-	},
-	{
 		path: '/auth/signup',
 		component: SignUp,
 		layout: 'auth',
