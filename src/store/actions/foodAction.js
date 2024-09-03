@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import firebase from "../../config/firebase";  
 import { db, storage } from "../../config/firebase";  
 
@@ -22,35 +23,43 @@ export const addFoodSchedule = (updatedSchedule, onComplete = () => { }) => (dis
       });  
     });  
   })  
-  .then(() => {  
-    onComplete();  
+  .then(() => { 
+    onComplete();
+    toast.success("SuccessFully Added");  
   })   
   .catch((error) => {  
-    console.error("Error uploading image or adding food schedule: ", error);  
+    toast.warning("Error in Adding food schedule: ", error);  
   });  
 };  
 
-export const deleteImage = (imageUrl) => (dispatch) => {
-  // console.log()
-  firebase.storage().refFromURL(imageUrl).delete();
-};
 
 export const editFoodSchedule = (id, updatedSchedule, onComplete = () => {}) => (dispatch) => {
   db.collection("food").doc(id).update(updatedSchedule).then(() => {
-    onComplete()
+    dispatch({ 
+      type: 'EDIT_FOOD_SCHEDULE', 
+      payload: { id, updatedSchedule } 
+    });  
+
+    onComplete();
+    toast.success("SuccessFully Updated");  
+  }).catch((error) => {
+    toast.warning("Error in Editing food schedule: ", error);  
+
   })
 }
 
-export const deleteFoodSchedule = (id, onComplete = () => { }) => async (dispatch) => {
-  try {  
+export const deleteFoodSchedule = (id, imageUrl,  onComplete = () => { }) => async (dispatch) => {
+  try { 
     await firebase.firestore().collection('food').doc(id).delete();  
+    await   firebase.storage().refFromURL(imageUrl).delete(); 
+
     dispatch({ 
       type: 'DELETE_FOOD_SCHEDULE', 
       payload: id 
     });  
-    console.log(id)
+    toast.success("SuccessFully Deleted");  
   } catch (error) {  
-    console.error("Error deleting:", error);  
+    toast.warning("Error in Deleting food schedule: ", error);  
   }    
   onComplete()
 };

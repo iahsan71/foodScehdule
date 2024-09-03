@@ -28,7 +28,7 @@ const Signup = (data) => {
             setSubmitSignup(false)
         }, 3000)
         console.log(data)
-dispatch(addFoodSchedule(data))
+// dispatch(addFoodSchedule(data))
         dispatch(userSignup(data, () => {
             setSubmitSignup(false);
             setInputEmail('');

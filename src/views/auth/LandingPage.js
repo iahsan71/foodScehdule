@@ -45,6 +45,7 @@ function LandingPage() {
                 dispatch(addFoodSchedule(newSchedule, () => {
                     setFoodName('');
                     setDay('');
+                    setSelectedImage(null)
                 }));
             } else {
                 const updatedSchedule = {
@@ -61,8 +62,8 @@ function LandingPage() {
         }
     };
 
-    const handleDelete = (id) => {
-        dispatch(deleteFoodSchedule(id, () => { }));
+    const handleDelete = (id, imageUrl) => {
+        dispatch(deleteFoodSchedule(id, imageUrl, () => { }));
     };
 
     useEffect(() => {
@@ -94,10 +95,6 @@ function LandingPage() {
         setEditing({ id: item.id })
         setFoodName(item.food)
         setDay(item.day)
-    }
-
-    const handleDeleteImg = (imageUrl) => {
-        dispatch(deleteImage(imageUrl))
     }
 
     return (
@@ -203,8 +200,7 @@ function LandingPage() {
                                     </td>
                                     <td className='d-flex'>
                                         <Button color="success" size="sm" className='mx-4' onClick={() => handleEdit(item.id)}>Edit</Button>
-                                        <Button color="danger" className='mx-auto' size="sm" onClick={() => handleDelete(item.id)}>Delete</Button>
-                                        <Button color="danger" size="sm" onClick={() => handleDeleteImg(item.imageUrl)}>Delete Img</Button>
+                                        <Button color="danger" className='mx-auto' size="sm" onClick={() => handleDelete(item.id, item.imageUrl)}>Delete</Button>
 
                                     </td>
                                 </tr>

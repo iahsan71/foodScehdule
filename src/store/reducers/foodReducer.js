@@ -32,6 +32,13 @@ const foodReducers = (state = initialData, action) => {
                 ...state,
                 list: [...state.list, action.payload],
             };
+        case 'EDIT_FOOD_SCHEDULE':
+            return {
+                ...state,
+                list: state.list.map(schedule =>
+                    schedule.id === action.payload.id ? { ...schedule, ...action.payload.updatedSchedule } : schedule
+                )
+            };
         default:
             return state;
     }
