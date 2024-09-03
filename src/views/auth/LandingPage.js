@@ -3,7 +3,7 @@ import { Button, Col, Input, Label, Navbar, NavbarBrand, Row, Table } from 'reac
 import { logout } from '../../store/actions/authAction';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { addFoodSchedule, deleteFoodSchedule, getFoodData, editFoodSchedule } from '../../store/actions/foodAction';
+import { addFoodSchedule, deleteFoodSchedule, getFoodData, editFoodSchedule, deleteImage } from '../../store/actions/foodAction';
 const daysOrder = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
 function LandingPage() {
@@ -18,13 +18,13 @@ function LandingPage() {
     const [searchFood, setSearchFood] = useState('');
     const [filterDay, setFilterDay] = useState('');
     const [sortOrder, setSortOrder] = useState('asc');
-    const [selectedImage, setSelectedImage] = useState(null);  
+    const [selectedImage, setSelectedImage] = useState(null);
 
-    const handleImageChange = (event) => {  
-        const file = event.target.files[0];  
+    const handleImageChange = (event) => {
+        const file = event.target.files[0];
         setSelectedImage(file)
-    };  
-// console.log(selectedImage)
+    };
+    // console.log(selectedImage)
     const handleLogout = () => {
         dispatch(logout(() => {
             history.push("/auth/login");
@@ -33,12 +33,12 @@ function LandingPage() {
 
     const handleAdd = () => {
         if (foodName && day) {
-            if (!editing.id){
+            if (!editing.id) {
                 const newSchedule = {
                     day,
                     food: foodName,
                     createdAt: new Date().toLocaleString(),
-                    image : selectedImage,
+                    image: selectedImage,
                     uid
                 };
                 // console.log(newSchedule)
@@ -96,6 +96,10 @@ function LandingPage() {
         setDay(item.day)
     }
 
+    const handleDeleteImg = (imageUrl) => {
+        dispatch(deleteImage(imageUrl))
+    }
+
     return (
         <>
             <Navbar>
@@ -128,11 +132,11 @@ function LandingPage() {
                     </Input>
                 </Col>
                 <Col lg='4' className='mt-5'>
-                    <div  className='d-flex'>
+                    <div className='d-flex'>
                         <input type="file" onChange={handleImageChange} />
                         {selectedImage && (
-                            <div> 
-                                <img src={selectedImage} alt="Selected" width={50} height={50}/>
+                            <div>
+                                <img src={selectedImage} alt="Selected" width={50} height={50} />
                             </div>
                         )}
                     </div>
@@ -175,13 +179,14 @@ function LandingPage() {
                 </Col>
             </Row>
             <Row className="mt-5 w-100">
-                <Col lg="6" className="ml-5">
+                <Col lg="8" className="ml-5">
                     <Table>
                         <thead>
                             <tr>
                                 <th>Day</th>
                                 <th>Food</th>
                                 <th>Created At</th>
+                                <th>Image</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -192,8 +197,15 @@ function LandingPage() {
                                     <td>{item.food}</td>
                                     <td>{item.createdAt}</td>
                                     <td>
+                                        {item.imageUrl && (
+                                            <img src={item.imageUrl} width={50} height={50} />
+                                        )}
+                                    </td>
+                                    <td className='d-flex'>
                                         <Button color="success" size="sm" className='mx-4' onClick={() => handleEdit(item.id)}>Edit</Button>
-                                        <Button color="danger" size="sm" onClick={() => handleDelete(item.id)}>Delete</Button>
+                                        <Button color="danger" className='mx-auto' size="sm" onClick={() => handleDelete(item.id)}>Delete</Button>
+                                        <Button color="danger" size="sm" onClick={() => handleDeleteImg(item.imageUrl)}>Delete Img</Button>
+
                                     </td>
                                 </tr>
                             ))}

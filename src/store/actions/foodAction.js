@@ -25,17 +25,31 @@ export const addFoodSchedule = (updatedSchedule, onComplete = () => { }) => (dis
   });  
 };  
 
+export const deleteImage = (imageUrl) => (dispatch) => {
+  // console.log()
+  firebase.storage().refFromURL(imageUrl).delete();
+};
+
 export const editFoodSchedule = (id, updatedSchedule, onComplete = () => {}) => (dispatch) => {
   db.collection("food").doc(id).update(updatedSchedule).then(() => {
     onComplete()
   })
 }
 
-export const deleteFoodSchedule = (id, onComplete = () => { }) => (dispatch) => {
-  firebase.firestore().collection('food').doc(id).delete();
+export const deleteFoodSchedule = (id, onComplete = () => { }) => async (dispatch) => {
+  try {  
+    await firebase.firestore().collection('food').doc(id).delete();  
+    dispatch({ 
+      type: 'DELETE_FOOD_SCHEDULE', 
+      payload: id 
+    });  
+    console.log(id)
+  } catch (error) {  
+    console.error("Error deleting:", error);  
+  }    
   onComplete()
 };
-export const getFoodData = (uid, lastDocument ) =>async (dispatch) => {
+export const getFoodData = (uid, lastDocument ) => async (dispatch) => {
   console.log(lastDocument)
   // console.log(uid)
 let quary=  firebase.firestore().collection("food").where("uid", "==", uid).orderBy("createdAt", "desc");
@@ -47,9 +61,9 @@ quary.limit(4).get().then((query) => {
     query.forEach((i) => {
       tempData.push({ ...i.data(), id: i.id })
     })
-    // console.log()
+    console.log(tempData)
     dispatch({
-      type: lastDocument !=="" ?"GET_FOOD_DATA_MORE"  :"GET_FOOD_DATA",
+      type: lastDocument !=="" ? "GET_FOOD_DATA_MORE"  :"GET_FOOD_DATA",
       payload: {data:tempData, lastDocument:query.docs[tempData.length -1],hasMoreDocument:tempData.length >= 4}
     })
   })
