@@ -15,11 +15,16 @@ export const addFoodSchedule = (updatedSchedule, onComplete = () => { }) => (dis
       imageUrl: url  
     };
 
-    return db.collection("food").add(newData);  
+    return db.collection("food").add(newData).then((doc) => {  
+      dispatch({   
+        type: 'ADD_FOOD_SCHEDULE',   
+        payload: { id: doc.id, ...newData }   
+      });  
+    });  
   })  
   .then(() => {  
-    onComplete();
-  })  
+    onComplete();  
+  })   
   .catch((error) => {  
     console.error("Error uploading image or adding food schedule: ", error);  
   });  

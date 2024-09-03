@@ -22,10 +22,15 @@ const foodReducers = (state = initialData, action) => {
         case 'DELETE_FOOD_SCHEDULE':
             return {
                 ...state,
-                list: state.list.filter((schedule) =>{
+                list: state.list.filter((schedule) => {
                     console.log(schedule.id)
                     return schedule.id !== action.payload
                 })
+            };
+        case 'ADD_FOOD_SCHEDULE':
+            return {
+                ...state,
+                list: [...state.list, action.payload],
             };
         default:
             return state;
