@@ -24,7 +24,7 @@ let routes = [
 	{
 		path: '/',
 		component: MainView,
-		layout: 'main',
+		layout: 'auth',
 	},
 ];
 	

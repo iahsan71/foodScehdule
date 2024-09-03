@@ -6,11 +6,11 @@ const Auth = props => {
 	const uid = useSelector((state) => state.authUser.uid);
     let history = useHistory()
 
-    useEffect(() => {
+    // useEffect(() => {
         if (uid) {
             history.push("/main/home")
         }
-    }, [uid])
+    // }, [uid])
 	return (
 		<>
 			{props.children}
