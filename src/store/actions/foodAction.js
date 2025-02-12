@@ -51,8 +51,9 @@ export const editFoodSchedule = (id, updatedSchedule, onComplete = () => {}) => 
 export const deleteFoodSchedule = (id, imageUrl,  onComplete = () => { }) => async (dispatch) => {
   try { 
     await firebase.firestore().collection('food').doc(id).delete();  
-    await   firebase.storage().refFromURL(imageUrl).delete(); 
-
+    if (imageUrl) {  
+      await firebase.storage().refFromURL(imageUrl).delete();  
+    }  
     dispatch({ 
       type: 'DELETE_FOOD_SCHEDULE', 
       payload: id 
